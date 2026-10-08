@@ -1,21 +1,30 @@
-function Card({ card, flipped, matched, onClick }) {
+import "../assets/css/card.css";
 
+function Card({ card, flipped, matched, wrong, onClick }) {
   const showEmoji = flipped || matched;
 
   return (
     <button
+      type="button"
       onClick={onClick}
-      className="
-        aspect-square
-        rounded-xl
-        bg-slate-800
-        text-3xl
-        shadow-md
-        transition
-        hover:scale-105
-      "
+      className={`card-container${wrong ? " wrong" : ""}`}
+      aria-label={`${showEmoji ? card.emoji : "Hidden card"}${matched ? ", matched" : ""}`}
+      aria-pressed={showEmoji}
+      disabled={matched}
     >
-      {showEmoji ? card.emoji : "❓"}
+      <div
+        className={`
+          card-inner
+          ${showEmoji ? "flipped" : ""}
+          ${matched ? "matched" : ""}
+        `}
+      >
+        {/* Back side */}
+        <div className="card-face card-back" aria-hidden="true">?</div>
+
+        {/* Front side */}
+        <div className="card-face card-front">{card.emoji}</div>
+      </div>
     </button>
   );
 }

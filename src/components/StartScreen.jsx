@@ -1,36 +1,102 @@
-function StartScreen({ onPlay }) {
+import { useState } from "react";
+import "../assets/css/StartScreen.css";
+import HowToPlayModal from "./HowToPlayModal";
+
+function StartScreen({
+  difficulty,
+  setDifficulty,
+  onPlay,
+}) {
+  const [showHelp, setShowHelp] = useState(false);
+
+  const levels = [
+    {
+      id: "easy",
+      name: "Easy",
+      cards: 24,
+      pairs: 12,
+      emoji: "🙂",
+    },
+    {
+      id: "medium",
+      name: "Medium",
+      cards: 36,
+      pairs: 18,
+      emoji: "🧠",
+    },
+    {
+      id: "hard",
+      name: "Hard",
+      cards: 50,
+      pairs: 25,
+      emoji: "🔥",
+    },
+  ];
+
+  const selectedLevel =
+    levels.find((level) => level.id === difficulty) || levels[1];
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-950 text-white">
+    <div className="startscreen">
+      <div className="startscreen__panel">
+        <header className="startscreen__header">
+          <div className="startscreen__badge" aria-hidden="true">🧠</div>
 
-      <div className="w-full max-w-md rounded-2xl bg-slate-900 p-8 text-center shadow-xl">
+          <h1 className="startscreen__title">Emoji Memory</h1>
 
-        <h1 className="mb-3 text-4xl font-bold">
-          🧠 Emoji Match
-        </h1>
+          <p className="startscreen__subtitle">
+            Match the pairs. Test your memory. Have fun.
+          </p>
+        </header>
 
-        <p className="mb-6 text-slate-400">
-          Find all matching emoji pairs!
-        </p>
+        <div className="startscreen__selector" role="group" aria-label="Select difficulty">
+          {levels.map((level) => (
+            <button
+              key={level.id}
+              type="button"
+              onClick={() => setDifficulty(level.id)}
+              aria-pressed={difficulty === level.id}
+              className={`startscreen__level ${
+                difficulty === level.id ? "startscreen__level--selected" : ""
+              }`}
+            >
+              <span className="startscreen__level-emoji">{level.emoji}</span>
 
-        <div className="mb-8 rounded-xl bg-slate-800 p-5 text-left">
-          <h2 className="mb-3 text-xl font-semibold">
-            How to Play
-          </h2>
+              <span className="startscreen__level-name">{level.name}</span>
 
-          <ul className="space-y-2 text-slate-300">
-            <li>• Select two cards.</li>
-            <li>• Find matching emojis.</li>
-            <li>• Match all pairs to win.</li>
-          </ul>
+              <span className="startscreen__level-meta">{level.pairs}</span>
+              <span className="startscreen__level-pairs">pairs</span>
+
+              <span className="startscreen__level-submeta">{level.cards} cards</span>
+            </button>
+          ))}
         </div>
 
-        <button
-          onClick={onPlay}
-          className="w-full rounded-xl bg-indigo-600 px-6 py-3 font-semibold transition hover:bg-indigo-500"
-        >
-          Play Game
-        </button>
+        <div className="startscreen__details" aria-live="polite">
+          <span className="startscreen__details-label">Current Mode</span>
 
+          <span className="startscreen__details-name">
+            {selectedLevel.name} <span>· {selectedLevel.pairs} pairs</span>
+          </span>
+
+          <span className="startscreen__details-hint">{selectedLevel.cards} cards · Find every pair</span>
+        </div>
+
+        <div className="startscreen__actions">
+          <button type="button" onClick={onPlay} className="startscreen__play">
+            ▶ Play Game
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setShowHelp(true)}
+            className="startscreen__help"
+          >
+            📖 How to Play
+          </button>
+        </div>
+
+        {showHelp && <HowToPlayModal onClose={() => setShowHelp(false)} />}
       </div>
     </div>
   );
